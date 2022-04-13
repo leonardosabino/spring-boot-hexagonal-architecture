@@ -1,0 +1,48 @@
+databaseChangeLog:
+  - changeSet:
+      id: createSequence-client
+      author: leonardo.sabino
+      changes:
+        - createSequence:
+            sequenceName: client_sequence
+            incrementBy: 1
+            startValue: 1
+  - changeSet:
+      id: create-table-client
+      author: leonardo.sabino
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: client
+      changes:
+        - createTable:
+            tableName: client
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: client_pk
+                  name: id
+                  type: bigint
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: varchar(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: age
+                  type: varchar(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: cpf
+                  type: varchar(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: rg
+                  type: varchar(255)

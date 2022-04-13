@@ -1,0 +1,207 @@
+openapi: 3.0.0
+info:
+  title: API Sample
+  description: Description API Sample
+  termsOfService: https://sample.com/terms/
+  contact:
+    name: API Support
+    url: https://www.sample.com/support
+    email: support@sample.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: "1.0"
+servers:
+  - url: https://apps-dev.template.com.br/sample
+    description: Development server
+  - url: https://apps-hml.template.com.br/sample
+    description: Staging server
+  - url: https://apps-prd.template.com.br/sample
+    description: Production server
+components:
+  schemas:
+    ClientDTO:
+      title: Object with client information
+      type: object
+      properties:
+        name:
+          type: string
+        age:
+          type: string
+        cpf:
+          type: string
+        rg:
+          type: string
+    MessageDTO:
+      title: Object with Message sqs information
+      type: object
+      properties:
+        message:
+          type: string
+    GeneralError:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    SampleResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        cpf:
+          type: string
+        rg:
+          type: string
+    GenericErrorResponse:
+      properties:
+        metadata:
+          $ref: '#/components/schemas/GenericErrorMetadata'
+        results:
+          $ref: '#/components/schemas/GenericErrorResults'
+    GenericErrorResults:
+      title: Object with response errors
+      properties:
+        userMessage:
+          type: string
+        developerMessage:
+          type: string
+        code:
+          type: string
+        origin:
+          type: string
+    GenericErrorMetadata:
+      title: Object with response metadata error
+      properties:
+        stage:
+          type: string
+        type:
+          type: string
+        info:
+          type: string
+  responses:
+    GeneralError:
+      description: General Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GeneralError'
+paths:
+  /client:
+    get:
+      summary: Consulta clients
+      operationId: findClients
+      responses:
+        '200':
+          description: "client"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClientDTO'
+    post:
+      summary: Save client
+      operationId: saveClient
+      requestBody:
+        description: Conversion information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientDTO'
+      responses:
+        '201':
+          description: "client"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientDTO'
+  /client/{cpf}:
+    delete:
+      summary: Delete client
+      operationId: deleteClient
+      parameters:
+        - in: path
+          name: cpf
+          schema:
+            type: string
+          required: true
+          description: string do client
+      responses:
+        '204':
+          description: "client deleted with success"
+    put:
+      summary: Update client
+      operationId: updateClient
+      parameters:
+        - in: path
+          name: cpf
+          schema:
+            type: string
+          required: true
+          description: client cpf
+      requestBody:
+        description: Conversion information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientDTO'
+      responses:
+        '202':
+          description: "client updated with success"
+    get:
+      summary: Find client by cpf
+      operationId: findClientByCpf
+      parameters:
+        - in: path
+          name: cpf
+          schema:
+            type: string
+          required: true
+          description: client cpf
+      responses:
+        '200':
+          description: "client recovered with success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientDTO'
+  /kafka:
+    get:
+      operationId: sendMessageExample
+      description: Endpoint to send message to kafka
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: '2021-07-23T15:16:05.528960900'
+  /sqs:
+    post:
+      operationId: sendMessageExampleSqs
+      description: Endpoint to send message to sqs
+      responses:
+        '200':
+          description: "message"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MessageDTO'
+      requestBody:
+        description: Conversion information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageDTO'
